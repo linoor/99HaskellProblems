@@ -51,7 +51,7 @@ encodeModified :: (Eq a) => [a] -> [Amount a]
 encodeModified xs = map (\x -> let len = length x in if len == 1 then Single (head x) else Multiple len (head x)) $ pack xs
 
 decodeModified :: [Amount a] -> [a]
-decodeModified [] = []
+decodeModified []     = []
 decodeModified (x:xs) = decode x ++ decodeModified xs
 	where
 		decode (Single a)     = [a]
@@ -64,4 +64,31 @@ encodeDirect xs = foldr foldFun [] xs
 		foldFun new acc = case (head acc) of
 					(Single c) -> if c == new then (Multiple 2 c) : (tail acc) else (Single new) : acc
 					(Multiple n c) -> if c == new then (Multiple (n+1) c) : (tail acc) else (Single new) : acc
-			
+
+dupli :: [a] -> [a]
+dupli []     = []
+dupli (x:xs) = [x, x] ++ dupli xs
+
+addOneElem :: (Eq a) => [a] -> [a]
+addOneElem [] = []
+addOneElem xs = (head xs) : foldr foldFun [] xs
+	where
+		foldFun new [] = [new]
+		foldFun new acc
+				| new == head acc  =  new : acc
+				| otherwise        =  new : (head acc) : acc
+
+repli :: (Eq a) => [a] -> Int -> [a]
+repli xs 1 = xs
+repli xs n = repli (addOneElem xs) (n-1)
+
+dropEvery :: [a] -> Int -> [a]
+dropEvery xs n = helper n xs
+	where
+		helper _ []     = []
+		helper 1 (x:xs) = helper n xs
+		helper n (x:xs) = x : (helper (n-1) xs)
+
+split :: [a] -> Int -> ([a], [a])
+split xs 
+
