@@ -90,5 +90,15 @@ dropEvery xs n = helper n xs
 		helper n (x:xs) = x : (helper (n-1) xs)
 
 split :: [a] -> Int -> ([a], [a])
-split xs 
+split xs n = helper ([], xs) n
+	where
+		helper (left, right) 0 = (left, right)
+		helper (left, (r:rs)) n = helper (left ++ [r], rs) (n-1)
+
+slice :: [a] -> Int -> Int -> [a]
+slice xs l r = helper xs l (r-l+1)
+	where
+		helper (x:xs) 1 1 = [x]
+		helper (x:xs) 1 r = x : (helper xs) 1 (r-1)
+		helper (x:xs) l r = helper xs (l-1) r
 
