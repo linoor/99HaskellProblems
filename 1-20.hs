@@ -102,3 +102,11 @@ slice xs l r = helper xs l (r-l+1)
 		helper (x:xs) 1 r = x : (helper xs) 1 (r-1)
 		helper (x:xs) l r = helper xs (l-1) r
 
+rotate :: [a] -> Int -> [a]
+rotate xs n = let (left, right) = split xs placeToSplit in right ++ left
+	where
+		placeToSplit = if n >= 0 then n else (length xs) - (abs n)
+
+removeAt :: Int -> [a] -> (a, [a])
+removeAt 1 (x:xs) = (x, xs)
+removeAt n (x:xs) = let (r, rs) = removeAt (n-1) xs in (r, x:rs)
