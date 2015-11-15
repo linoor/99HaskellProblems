@@ -110,3 +110,17 @@ rotate xs n = let (left, right) = split xs placeToSplit in right ++ left
 removeAt :: Int -> [a] -> (a, [a])
 removeAt 1 (x:xs) = (x, xs)
 removeAt n (x:xs) = let (r, rs) = removeAt (n-1) xs in (r, x:rs)
+
+insertAt :: a -> [a] -> Int -> [a]
+insertAt elem xs 1 = elem : xs
+insertAt elem (x:xs) n = x : (insertAt elem xs (n-1))
+
+range :: Int -> Int -> [Int]
+range left right = helper left
+	where
+		helper current
+			| current > right = [] 
+			| current < left = nextNum
+			| current >= left && current <= right = current : nextNum
+			where
+				nextNum = helper (current+1)
