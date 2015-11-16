@@ -1,4 +1,5 @@
 import Data.List
+import System.Random 
 
 myLast :: [a] -> a
 myLast [x] = x
@@ -89,8 +90,8 @@ dropEvery xs n = helper n xs
 		helper 1 (x:xs) = helper n xs
 		helper n (x:xs) = x : (helper (n-1) xs)
 
-split :: [a] -> Int -> ([a], [a])
-split xs n = helper ([], xs) n
+mySplit :: [a] -> Int -> ([a], [a])
+mySplit xs n = helper ([], xs) n
 	where
 		helper (left, right) 0 = (left, right)
 		helper (left, (r:rs)) n = helper (left ++ [r], rs) (n-1)
@@ -103,7 +104,7 @@ slice xs l r = helper xs l (r-l+1)
 		helper (x:xs) l r = helper xs (l-1) r
 
 rotate :: [a] -> Int -> [a]
-rotate xs n = let (left, right) = split xs placeToSplit in right ++ left
+rotate xs n = let (left, right) = mySplit xs placeToSplit in right ++ left
 	where
 		placeToSplit = if n >= 0 then n else (length xs) - (abs n)
 
@@ -124,3 +125,9 @@ range left right = helper left
 			| current >= left && current <= right = current : nextNum
 			where
 				nextNum = helper (current+1)
+
+randomSelect :: [a] -> Int -> IO [a]
+randomSelect xs n = do
+			gen <- newStdGen
+			let generatedIndexes = take n $ randomRs (0, (length xs)-1) gen
+			return $ [xs !! x | x <- generatedIndexes] 
