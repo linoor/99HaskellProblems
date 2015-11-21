@@ -131,3 +131,18 @@ randomSelect xs n = do
 			gen <- newStdGen
 			let generatedIndexes = take n $ randomRs (0, (length xs)-1) gen
 			return $ [xs !! x | x <- generatedIndexes] 
+
+isPrime :: Int -> Bool
+isPrime n
+	| n <= 1                            =  False
+	| n <= 3                            =  True
+	| n `mod` 2 == 0 || n `mod` 3 == 0  =  False
+	| otherwise                         =  helper 5
+	where 
+		helper i
+			| i*i > n                                 =  True
+			| n `mod` i == 0 || n `mod` (i + 2) == 0  =  False
+			| otherwise                               =  helper (i+6)
+
+gcd :: Int -> Int -> Int
+gcd a b = 
