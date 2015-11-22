@@ -144,5 +144,32 @@ isPrime n
 			| n `mod` i == 0 || n `mod` (i + 2) == 0  =  False
 			| otherwise                               =  helper (i+6)
 
-gcd :: Int -> Int -> Int
-gcd a b = 
+myGCD :: Int -> Int -> Int
+myGCD a b
+      | b == 0     = abs a
+      | otherwise  = myGCD b (a `mod` b)
+
+coprime :: Int -> Int -> Bool
+coprime a b = myGCD a b == 1
+
+totient :: Int -> Int
+totient 1 = 1
+totient n = length $ filter (coprime n) [1..n-1]
+
+primeFactors :: Int -> [Int]
+primeFactors 1 = []
+primeFactors n = primeFactors' 2 where
+	primeFactors' x
+		| x == n          = [x]
+		| n `mod` x == 0  = x : primeFactors (n `div` x)
+		| otherwise       = primeFactors' (x+1)
+
+primeFactorsMult :: Int -> [(Int, Int)]
+primeFactorsMult n = map encode . group $ primeFactors n
+	where encode xs = (head xs, length xs)
+
+totientImproved :: Int -> Int
+totientImproved 1 = 1
+totientImproved n = foldl foldFun 1 $ primeFactorsMult n
+	where
+		foldFun acc new = let (p, m) = new in ((p-1) * p ^ (m-1)) * acc
