@@ -173,3 +173,23 @@ totientImproved 1 = 1
 totientImproved n = foldl foldFun 1 $ primeFactorsMult n
 	where
 		foldFun acc new = let (p, m) = new in ((p-1) * p ^ (m-1)) * acc
+
+data SieveMark = Marked | UnMarked | Prime deriving (Show, Eq)
+primes :: Int -> [Int]
+primes limit = helper allNums where
+	helper :: [(SieveMark, Int)] -> [Int]
+	helper xs = case potentialNum of
+		Just (mark, p) -> helper $ markAllMultiples p xs
+		Nothing        -> map snd $ filter (\(mark, num) -> mark == Prime) xs
+		where
+			potentialNum = find (\(mark, num) -> mark == UnMarked) xs 
+	allNums = map (\x -> (UnMarked, x)) [2..limit]
+
+markAllMultiples :: Int -> [(SieveMark, Int)] -> [(SieveMark, Int)]
+markAllMultiples p xs = map markHelper xs where
+	markHelper :: (SieveMark, Int) -> (SieveMark, Int)
+	markHelper (mark, num)
+				| num == p          = (Prime, num)
+				| mark == Marked    = (Marked, num)
+				| num `mod` p == 0  = (Marked, num)
+				| otherwise         = (mark, num)
