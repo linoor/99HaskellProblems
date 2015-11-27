@@ -1,5 +1,6 @@
 import Data.List
 import System.Random 
+import Control.Applicative
 
 myLast :: [a] -> a
 myLast [x] = x
@@ -193,3 +194,20 @@ markAllMultiples p xs = map markHelper xs where
 				| mark == Marked    = (Marked, num)
 				| num `mod` p == 0  = (Marked, num)
 				| otherwise         = (mark, num)
+
+primesR :: Int -> Int -> [Int]
+primesR l r = filter isPrime [l..r]
+
+goldbach :: Int -> Maybe (Int, Int)
+goldbach n = find (\(a,b) -> a + b == n) $ (,) <$> primes <*> primes where
+	primes = primesR 2 n
+
+goldbachlist :: Int -> Int -> [(Int, Int, Int)]
+goldbachlist l r = map (\n -> case goldbach n of
+						Just (a,b) -> (n, a, b)
+						otherwise -> (-1, -1, -1)
+						) nums where
+							nums = let startingNum = if l `rem` 2 == 0 then l else l+1 in [startingNum, startingNum+2..r]
+
+goldbachlist' :: Int -> Int -> Int -> [(Int, Int, Int)]
+goldbachlist' l r limit = filter (\(n, a, b) -> a > limit && b > limit) $ goldbachlist l r 
