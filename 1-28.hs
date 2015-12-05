@@ -1,19 +1,18 @@
 import Data.List
 import System.Random 
 import Control.Applicative
+import Data.Tree hiding (Tree, flatten)
 
 myLast :: [a] -> a
 myLast [x] = x
 myLast (x:xs) = myLast xs
-
 myButLast :: [a] -> a
 myButLast (x:y:[]) = x
 myButLast (x:xs) = myButLast xs
 
 elementAt :: Int -> [a] -> a
 elementAt 1 (x:xs) = x
-elementAt k (x:xs) = elementAt (k-1) xs
-
+elementAt k (x:xs) = elementAt (k-1) xs 
 myLength :: [a] -> Int
 myLength xs = foldr (\x acc -> acc + 1) 0 xs
 
@@ -211,3 +210,19 @@ goldbachlist l r = map (\n -> case goldbach n of
 
 goldbachlist' :: Int -> Int -> Int -> [(Int, Int, Int)]
 goldbachlist' l r limit = filter (\(n, a, b) -> a > limit && b > limit) $ goldbachlist l r 
+
+gray :: Int -> [String]
+gray 0 = [""]
+gray n = let xs = gray (n-1) in (map ('0':) xs) ++ (map ('1':) (reverse xs))
+
+data Tree a = Empty | Branch a (Tree a) (Tree a) | Leaf a
+	deriving (Show, Eq, Ord)
+
+leaf :: a -> Tree a
+leaf x = Branch x Empty Empty
+
+toDataTree (Leaf a) = Node (show a) []
+toDataTree (Branch b cs ds) = Node (show b) [toDataTree cs, toDataTree ds]	
+
+printTree :: Show a => Tree a -> IO ()
+printTree tree = putStrLn . drawTree $ toDataTree tree
